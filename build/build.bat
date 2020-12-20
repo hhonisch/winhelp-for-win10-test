@@ -76,5 +76,4 @@ if "%ERROR_OCCURRED%"=="1" (
 ) else (
   cmd /c exit 0
 )
-goto :eof
-
+exit 1
