@@ -9,8 +9,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v1.0.2
+        
       - name: Compile
         run: .\build\build.bat
         shell: cmd
+      
+      - name: Upload installer
+        uses: actions/upload-artifact@v2
+        with:
+          name: Setup
+          path: .\dist\Setup*.exe
