@@ -76,5 +76,3 @@ if "%ERROR_OCCURRED%"=="1" (
 ) else (
   cmd /c exit 0
 )
-echo Exit with error
-exit 1
