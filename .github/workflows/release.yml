@@ -1,6 +1,6 @@
 name: Create Release
 
-on: 
+on:
   push:
     # Sequence of patterns matched against refs/tags
     tags:
@@ -16,16 +16,10 @@ jobs:
 
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v1.0.2
-        
+
       - name: Compile
         run: .\build\build.bat
         shell: cmd
-      
-      - name: Upload installer
-        uses: actions/upload-artifact@v2
-        with:
-          name: Setup
-          path: .\dist\Setup*.exe
 
       - name: Create Release
         id: create_release
@@ -41,13 +35,14 @@ jobs:
             - Second Change
           draft: true
           prerelease: true
+
       - name: Upload Release Asset
-        id: upload-release-asset 
+        id: upload-release-asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_path: .\dist\Setup*.exe
-          asset_name: Setup.exe
-          asset_content_type: application/octet-stream          
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+          asset_path: .\dist\Setup_WinHelp4Win10.exe
+          asset_name: Setup_WinHelp4Win10.exe
+          asset_content_type: application/octet-stream
