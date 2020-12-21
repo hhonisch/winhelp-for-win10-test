@@ -11,7 +11,13 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Show env
+      - name: Show env 1
+        run: dir env:
+
+      - name: Set env
+        run: echo "MY_VERSION=123" >> GITHUB_ENV
+
+      - name: Show env 2
         run: dir env:
 
       - name: Checkout
