@@ -17,14 +17,17 @@ jobs:
       - name: Set env x
         run: echo "MY_VERSION=123" >> $env:GITHUB_ENV
 
-      - name: Run build helper
-        run: .\build\github_build_helper.ps1
-
       - name: Show env 2
         run: "dir env:"
 
       - name: Checkout
         uses: actions/checkout@v2
+
+      - name: Run build helper
+        run: .\build\github_build_helper.ps1
+
+      - name: Show env 3
+        run: "dir env:"
 
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v1.0.2
