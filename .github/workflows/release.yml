@@ -11,6 +11,9 @@ jobs:
     runs-on: windows-latest
 
     steps:
+      - name: Show env
+        run: dir env:
+
       - name: Checkout
         uses: actions/checkout@v2
 
