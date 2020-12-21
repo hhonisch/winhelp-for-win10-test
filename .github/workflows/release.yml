@@ -20,29 +20,29 @@ jobs:
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v1.0.2
 
-       - name: Compile
-         run: .\build\build.bat
-         shell: cmd
+      - name: Compile
+        run: .\build\build.bat
+        shell: cmd
 
-       - name: Create Release
-         id: create_release
-         uses: actions/create-release@v1
-         env:
-           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-         with:
-           tag_name: ${{ github.ref }}
-           release_name: Release ${{ env.MY_VERSION }}
-           body_path: RELEASE_NOTES.md
-           draft: true
-           prerelease: true
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ env.MY_VERSION }}
+          body_path: RELEASE_NOTES.md
+          draft: true
+          prerelease: true
 
-       - name: Upload Release Asset
-         id: upload-release-asset
-         uses: actions/upload-release-asset@v1
-         env:
-           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-         with:
-           upload_url: ${{ steps.create_release.outputs.upload_url }} 
-           asset_path: .\dist\Setup_WinHelp4Win10.exe
-           asset_name: WinHelp4Win10-${{ env.MY_VERSION }}.exe
-           asset_content_type: application/octet-stream
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} 
+          asset_path: .\dist\Setup_WinHelp4Win10.exe
+          asset_name: WinHelp4Win10-${{ env.MY_VERSION }}.exe
+          asset_content_type: application/octet-stream
