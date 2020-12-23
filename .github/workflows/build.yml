@@ -13,10 +13,14 @@ jobs:
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v1.0.2
         
+#      - name: Compile
+#        run: .\build\build.bat
+#        shell: cmd
+
       - name: Compile
-        run: .\build\build.bat
-        shell: cmd
+        run: msbuild .\build\build.proj
       
+
       - name: Upload installer
         uses: actions/upload-artifact@v2
         with:
