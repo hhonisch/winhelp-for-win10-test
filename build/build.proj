@@ -1,0 +1,73 @@
+<Project DefaultTargets="Clean;Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+    <PropertyGroup>
+        <BinPath>$(MSBuildProjectDirectory)\..\bin</BinPath>
+        <DistPath>$(MSBuildProjectDirectory)\..\dist</DistPath>
+        <WinHelpProxyDir>$(MSBuildProjectDirectory)\..\src\WinHelpProxy</WinHelpProxyDir>
+        <SetupDir>$(MSBuildProjectDirectory)\..\src\Setup</SetupDir>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <!-- WinHelp proxy configurations -->
+        <WinHelpProxyConfs Include="$(WinHelpProxyDir)\WinHelpProxy.sln">
+            <Properties>Configuration=Release;Platform=x86</Properties>
+        </WinHelpProxyConfs>
+        <WinHelpProxyConfs Include="$(WinHelpProxyDir)\WinHelpProxy.sln">
+            <Properties>Configuration=Release;Platform=x64</Properties>
+        </WinHelpProxyConfs>
+    </ItemGroup>
+
+
+    <!-- Clean dist files -->
+    <Target Name="CleanDist">
+        <ItemGroup>
+            <DistFiles Include="$(DistPath)\*.exe" />
+        </ItemGroup>
+        <Delete Files="@(DistFiles)" />
+    </Target>
+
+    <!-- Clean bin files -->
+    <Target Name="CleanBin">
+        <RemoveDir Directories="$(BinPath)\x64;$(BinPath)\x86" />
+    </Target>
+
+    <!-- Clean WinHelpProxy -->
+    <Target Name="CleanWinHelpProxy">
+        <MSBuild Projects="@(WinHelpProxyConfs)" Targets="Clean"/>
+    </Target>
+
+    <!-- Clean Setup -->
+    <Target Name="CleanSetup">
+        <ItemGroup>
+            <SetupFiles Include="$(SetupDir)\Output\*" />
+        </ItemGroup>
+        <Delete Files="@(SetupFiles)" />
+    </Target>
+
+    <!-- Clean everything -->
+    <Target Name="Clean" DependsOnTargets="CleanDist;CleanBin;CleanWinHelpProxy;CleanSetup" />
+
+
+    <!-- Build WinHelpProxy -->
+    <Target Name="BuildWinHelpProxy">
+        <MSBuild Projects="@(WinHelpProxyConfs)" Targets="Build" BuildInParallel="true"/>
+
+        <!-- Export binaries -->
+        <Copy SourceFiles="$(WinHelpProxyDir)\Release\WinHelpProxy.exe" DestinationFolder="$(BinPath)\x86" />
+        <Copy SourceFiles="$(WinHelpProxyDir)\x64\Release\WinHelpProxy.exe" DestinationFolder="$(BinPath)\x64" />
+    </Target>
+
+
+    <!-- Build Setup -->
+    <Target Name="BuildSetup" >
+        <Exec Command="iscc WinHelp4Win10.iss" WorkingDirectory="$(SetupDir)" />
+        <ItemGroup>
+            <SetupFiles Include="$(SetupDir)\Output\*" />
+        </ItemGroup>
+        <Copy SourceFiles="@(SetupFiles)" DestinationFolder="$(DistPath)" />
+    </Target>
+
+    <!-- Build everything -->
+    <Target Name="Build" DependsOnTargets="BuildWinHelpProxy;BuildSetup" />
+
+</Project>
