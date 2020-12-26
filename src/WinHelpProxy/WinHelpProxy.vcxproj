@@ -155,7 +155,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="framework.h" />
-    <ClInclude Include="Resource.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="WinHelpProxy.h" />
   </ItemGroup>
@@ -163,10 +163,10 @@
     <ClCompile Include="WinHelpProxy.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="WinHelpProxy.rc" />
+    <Image Include="WinHelpProxy.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="WinHelpProxy.ico" />
+    <ResourceCompile Include="WinHelpProxy.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
