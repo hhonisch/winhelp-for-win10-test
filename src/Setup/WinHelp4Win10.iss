@@ -1,4 +1,4 @@
-
+﻿
 ; Include parameters file if available
 #ifexist SourcePath + "WinHelp4Win10.Params.iss"
   #include SourcePath + "WinHelp4Win10.Params.iss"
@@ -6,8 +6,9 @@
 
 ; Define general constants
 #define MyAppName "WinHelp for Windows 10"
-#define MyAppVersion "1.0"
-#define MyAppVerName MyAppName + " v" + MyAppVersion
+#define MyAppVersion "0.0.1"
+#define MyBuildNo "0"
+#define MyAppVerName MyAppName + " - v" + MyAppVersion
 
 #define MsuDir "{tmp}\msu"
 #define Msu32Prefix MsuDir + "\x86_microsoft_microsoft-windows-winhstb.resources_31bf3856ad364e35_6.3.9600.20470_"
@@ -27,8 +28,8 @@
 AppId={{B7CF8649-E7A8-4877-AA4E-0D50D2D7690F}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
-VersionInfoVersion={#MyAppVersion}.0.0
-VersionInfoProductVersion={#MyAppVersion}.0.0
+VersionInfoVersion={#MyAppVersion}.{#MyBuildNo}
+VersionInfoProductVersion={#MyAppVersion}.{#MyBuildNo}
 
 AppVerName={#MyAppVerName}
 DefaultDirName={autopf}\{#MyAppName}
