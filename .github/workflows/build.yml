@@ -7,6 +7,9 @@ jobs:
     runs-on: windows-latest
 
     steps:
+      - name: Log run Info
+        run: echo "Run ID: ${{ github.run_id }}"
+    
       - name: Checkout
         uses: actions/checkout@v2
 
