@@ -26,6 +26,8 @@ jobs:
         with:
           name: Dist
           path: 
-            dist\*
-            !dist\.keep
+            dist\*.exe
+            dist\*.md
+            dist\*.json  
+            
             
