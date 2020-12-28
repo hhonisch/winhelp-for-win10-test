@@ -5,6 +5,8 @@
         <DistPath>$(MSBuildProjectDirectory)\..\dist</DistPath>
         <WinHelpProxyDir>$(MSBuildProjectDirectory)\..\src\WinHelpProxy</WinHelpProxyDir>
         <SetupDir>$(MSBuildProjectDirectory)\..\src\Setup</SetupDir>
+        <BuildNo>0</BuildNo>
+        <BuildNoOffset>0</BuildNoOffset>
     </PropertyGroup>
 
     <ItemGroup>
@@ -46,6 +48,11 @@
 
     <!-- Clean everything -->
     <Target Name="Clean" DependsOnTargets="CleanDist;CleanBin;CleanWinHelpProxy;CleanSetup" />
+
+    <!-- Set version -->
+    <Target Name="SetVersion">
+        <Exec Command="powershell.exe –NonInteractive –ExecutionPolicy Unrestricted &quot;&amp; &#39;$(MSBuildProjectDirectory)\set_version.ps1&#39;&quot; -BuildNo $(BuildNo) -BuildNoOffset $(BuildNoOffset)" />
+    </Target>
 
 
     <!-- Build WinHelpProxy -->
