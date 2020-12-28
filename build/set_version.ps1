@@ -3,7 +3,10 @@
 
 param(
     # Build number
-    [int]$BuildNo = 0
+    [int]$BuildNo = 0,
+    # Build number offset
+    [int]$BuildNoOffset = 0
+
 )
 
 
@@ -74,7 +77,7 @@ function Main() {
         $ver.major = $Matches[1]
         $ver.minor = $Matches[2]
         $ver.patch = $Matches[3]
-        $ver.build = $BuildNo
+        $ver.build = $BuildNo + $BuildNoOffset
         $ver.str3 = "$($ver.major).$($ver.minor).$($ver.patch)"
         $ver.str4 = "$($ver.major).$($ver.minor).$($ver.patch).$($ver.build)"
     }
