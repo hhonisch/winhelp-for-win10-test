@@ -40,7 +40,7 @@ function StoreReleaseMetaInfo() {
 
 
     Write-Host "Writing to $path..."
-    $json = [ordered]@{ key = "value" ; version = $verStr; commitHash = $commitHash }
+    $json = [ordered]@{ version = $verStr; commitHash = $commitHash }
     ConvertTo-Json $json | Out-File $path
 
     Write-Host "Done: Store release meta info"
