@@ -12,14 +12,9 @@ jobs:
 
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v1.0.2
-        
-#      - name: Compile
-#        run: .\build\build.bat
-#        shell: cmd
 
       - name: Compile
-        run: msbuild .\build\build.proj
-      
+        run: msbuild .\build\build.proj /t:GithubBuild /p:BuildNo=${{ github.run_number }}
 
       - name: Upload installer
         uses: actions/upload-artifact@v2
