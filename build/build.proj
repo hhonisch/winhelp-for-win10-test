@@ -24,19 +24,24 @@
     <Target Name="CleanDist">
         <ItemGroup>
             <DistFiles Include="$(DistPath)\*.exe" />
+            <DistFiles Include="$(DistPath)\*.json" />
+            <DistFiles Include="$(DistPath)\*.md" />
         </ItemGroup>
         <Delete Files="@(DistFiles)" />
     </Target>
+
 
     <!-- Clean bin files -->
     <Target Name="CleanBin">
         <RemoveDir Directories="$(BinPath)\x64;$(BinPath)\x86" />
     </Target>
 
+
     <!-- Clean WinHelpProxy -->
     <Target Name="CleanWinHelpProxy">
         <MSBuild Projects="@(WinHelpProxyConfs)" Targets="Clean"/>
     </Target>
+
 
     <!-- Clean Setup -->
     <Target Name="CleanSetup">
@@ -46,8 +51,10 @@
         <Delete Files="@(SetupFiles)" />
     </Target>
 
+
     <!-- Clean everything -->
     <Target Name="Clean" DependsOnTargets="CleanDist;CleanBin;CleanWinHelpProxy;CleanSetup" />
+
 
     <!-- Set version -->
     <Target Name="SetVersion">
@@ -57,6 +64,7 @@
 
     <!-- Build WinHelpProxy -->
     <Target Name="BuildWinHelpProxy">
+        <!-- Build binaries -->
         <MSBuild Projects="@(WinHelpProxyConfs)" Targets="Build" BuildInParallel="true"/>
 
         <!-- Export binaries -->
@@ -67,6 +75,7 @@
 
     <!-- Build Setup -->
     <Target Name="BuildSetup" >
+        <!-- Run InnoSetup -->
         <Exec Command="iscc WinHelp4Win10.iss" WorkingDirectory="$(SetupDir)" />
         <ItemGroup>
             <SetupFiles Include="$(SetupDir)\Output\*" />
@@ -74,9 +83,20 @@
         <Copy SourceFiles="@(SetupFiles)" DestinationFolder="$(DistPath)" />
     </Target>
 
+
+    <!-- Build release info -->
+    <Target Name="BuildReleaseInfo" >
+        <!-- Store meta info -->
+        <Exec Command="powershell.exe –NonInteractive –ExecutionPolicy Unrestricted &quot;&amp; &#39;$(MSBuildProjectDirectory)\github_build_helper.ps1&#39;&quot; StoreReleaseMetaInfo" />
+        <!-- Write release notes -->
+        <Exec Command="powershell.exe –NonInteractive –ExecutionPolicy Unrestricted &quot;&amp; &#39;$(MSBuildProjectDirectory)\github_build_helper.ps1&#39;&quot; StoreReleaseNotes" />
+    </Target>
+
+
     <!-- Build everything -->
-    <Target Name="Build" DependsOnTargets="BuildWinHelpProxy;BuildSetup" />
-    
+    <Target Name="Build" DependsOnTargets="BuildWinHelpProxy;BuildSetup;BuildReleaseInfo" />
+
+
     <!-- Github Build -->
     <Target Name="GithubBuild" DependsOnTargets="SetVersion;Build" />
 
