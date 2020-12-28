@@ -21,7 +21,7 @@ jobs:
       - name: Compile
         run: msbuild .\build\build.proj /t:GithubBuild /p:BuildNo=${{ github.run_number }}
 
-      - name: Upload installer
+      - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
           name: Dist
