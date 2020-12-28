@@ -25,5 +25,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: Dist
-          path: .\dist\*
+          path: 
+            dist\*
+            !dist\.keep
             
