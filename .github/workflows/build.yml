@@ -7,9 +7,11 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Log run Info
-        run: echo "Run ID: ${{ github.run_id }}"
-    
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+        
       - name: Checkout
         uses: actions/checkout@v2
 
