@@ -25,7 +25,5 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: Dist
-          path: 
-            .\dist\*
-            !.\dist\.*
+          path: .\dist\*.exe
             
