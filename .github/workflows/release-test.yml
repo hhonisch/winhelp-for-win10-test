@@ -53,5 +53,5 @@ jobs:
           DOWNLOAD_URL: ${{fromJson(steps.get-dist-artifact-url.outputs.result).archive_download_url}} 
         run: |
           echo "Downloading $DOWNLOAD_URL"
-          curl -L -v -O -J -H "Authorization: token ${{secrets.GITHUB_TOKEN}}" $DOWNLOAD_URL
+          curl -L -O -J -H "Authorization: token ${{secrets.GITHUB_TOKEN}}" $DOWNLOAD_URL
           ls
