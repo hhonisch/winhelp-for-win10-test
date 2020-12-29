@@ -23,8 +23,8 @@ jobs:
         with:
           script: |
             const opts = github.issues.listWorkflowRunArtifacts.endpoint.merge({
-              'hhonisch',
-              'winhelp-for-win10-text',
+              owner: 'hhonisch',
+              repo: 'winhelp-for-win10-text',
               run_id: '449167763'
             })
             const artifacts = await github.paginate(opts)
