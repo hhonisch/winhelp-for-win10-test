@@ -18,14 +18,17 @@ jobs:
           script: |
             console.log(context)
             
-      - name: View github attributes
+      - name: Download artifacts
         uses: actions/github-script@0.9.0
         with:
           script: |
-            console.log(github)
+            const opts = github.issues.listWorkflowRunArtifacts.endpoint.merge({
+              'hhonisch",
+              'winhelp-for-win10-text',
+              run_id: '449167763'
+            })
+            const artifacts = await github.paginate(opts)
             
-#      - name: Download artifacts
-#        uses: actions/github-script@0.9.0
-#        with:
-#          script: |
-#            github.
+            for(const artifact of artifacts) {
+              console.log(artifact)
+            }
