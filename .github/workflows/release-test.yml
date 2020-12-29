@@ -47,5 +47,5 @@ jobs:
       - name: Download artifact
         run: |
           echo "Result: ${{steps.get-dist-artifact-url.outputs.result}}"
-          echo "Result URL: ${{fromJson(steps.get-dist-artifact-url.outputs)}}"
-          curl 
+          #echo "Result URL: ${{fromJson(steps.get-dist-artifact-url.outputs)}}"
+          #curl 
