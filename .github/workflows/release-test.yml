@@ -23,7 +23,7 @@ jobs:
         with:
           script: |
             const opts = github.actions.listWorkflowRunArtifacts.endpoint.merge({
-              owner: 'hhonisch',
+              owner: context.repository.owner,
               repo: context.repository.name,
               run_id: '449167763'
             })
