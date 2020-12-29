@@ -48,10 +48,13 @@ jobs:
             console.log(distArtifact)
             return distArtifact
             
-      - name: Download artifact
+      - name: Download dist artifacts
         env:
           DOWNLOAD_URL: ${{fromJson(steps.get-dist-artifact-url.outputs.result).archive_download_url}} 
         run: |
           echo "Downloading $DOWNLOAD_URL"
-          curl -L -O -J -H "Authorization: token ${{secrets.GITHUB_TOKEN}}" $DOWNLOAD_URL
-          ls
+          curl -L -o Dist.zip -H "Authorization: token ${{secrets.GITHUB_TOKEN}}" $DOWNLOAD_URL
+          echo "Unzipping"
+          unzip Dist.zip
+          ls -r
+
