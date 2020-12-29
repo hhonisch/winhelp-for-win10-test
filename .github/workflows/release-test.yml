@@ -22,24 +22,23 @@ jobs:
         id: get-dist-artifact-url
         uses: actions/github-script@0.9.0
         env:
-          ARTIFACT_NAME: "Dist"
-          RUN_ID: "449167763"
+          MY_ARTIFACT_NAME: "Dist"
+          MY_RUN_ID: "449167763"
         with:
           #result-encoding: string
           script: |
-            console.log(process.env)
             // Get list of artifacts for given run 
             const opts = github.actions.listWorkflowRunArtifacts.endpoint.merge({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              run_id: process.env.RUN_ID
+              run_id: process.env.MY_RUN_ID
             })
             const artifacts = await github.paginate(opts)
             
             // Find artifact with desired name
             var distArtifact = null
             for(const artifact of artifacts) {
-              if(artifact.name == process.env.ARTIFACT_NAME) {
+              if(artifact.name == process.env.MY_ARTIFACT_NAME) {
                 distArtifact = artifact
               }
             }
@@ -53,4 +52,6 @@ jobs:
         env:
           DOWNLOAD_URL: ${{fromJson(steps.get-dist-artifact-url.outputs.result).archive_download_url}} 
         run: |
+          echo "Downloading $DOWNLOAD_URL"
           curl -s -H "Authorization: token ${{secrets.GITHUB_TOKEN}}" $DOWNLOAD_URL
+          ls
