@@ -46,4 +46,4 @@ jobs:
             
       - name: Download artifact
         run: |
-          echo "Result: ${steps.gget-dist-artifact-url.outputs.result}}"
+          echo "Result: ${{steps.get-dist-artifact-url.outputs.result}}"
