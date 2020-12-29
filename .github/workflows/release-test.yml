@@ -24,8 +24,8 @@ jobs:
           script: |
             console.log(github)
             
-      - name: Download artifacts
-        uses: actions/github-script@0.9.0
-        with:
-          script: |
-            github.
+#      - name: Download artifacts
+#        uses: actions/github-script@0.9.0
+#        with:
+#          script: |
+#            github.
