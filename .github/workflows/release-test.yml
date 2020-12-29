@@ -58,11 +58,11 @@ jobs:
           echo "Unzipping"
           unzip Dist.zip
           META=$(cat meta.json)
-          echo "::set-output result=xxx"
+          echo "::set-output name=result::$META"
 
       - name: Create Release
         id: create_release
         env:
           MY_COMMIT_HASH: ${{steps.download-build-artifacts.outputs.result}} 
         run: |
-          echo "Commit hash: $MY_COMMIT_HASH
+          echo "Commit hash: $MY_COMMIT_HASH"
