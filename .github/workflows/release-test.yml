@@ -57,5 +57,5 @@ jobs:
           echo "Unzipping"
           unzip Dist.zip
           META=$(cat meta.json)
-          echo "::set-output result=META"
+          echo "::set-output result=$META"
 
