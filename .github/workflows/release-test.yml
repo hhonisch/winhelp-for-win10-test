@@ -23,8 +23,8 @@ jobs:
         with:
           script: |
             const opts = github.actions.listWorkflowRunArtifacts.endpoint.merge({
-              owner: context.repository.owner,
-              repo: context.repository.name,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
               run_id: '449167763'
             })
             const artifacts = await github.paginate(opts)
