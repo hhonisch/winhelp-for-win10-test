@@ -42,11 +42,12 @@ jobs:
             if (!distArtifact) {
               throw "Artifact not found"
             }
+            console.log(distArtifact)
             return distArtifact
             
       - name: Download artifact
         env:
-          DOWNLOAD_URL: ${{fromJson(steps.get-dist-artifact-url.outputs.result)}} 
+          DOWNLOAD_URL: ${{fromJson(steps.get-dist-artifact-url.outputs.result).name}} 
         run: |
           echo "Result: ${{steps.get-dist-artifact-url.outputs.result}}"
           echo "Result: $DOWNLOAD_URL"
