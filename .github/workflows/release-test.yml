@@ -56,6 +56,6 @@ jobs:
           curl -L -o Dist.zip -H "Authorization: token ${{secrets.GITHUB_TOKEN}}" $DOWNLOAD_URL
           echo "Unzipping"
           unzip Dist.zip
-          cat meta.json
-          echo "::set-output result=123"
+          META=$(cat meta.json)
+          echo "::set-output result=META"
 
