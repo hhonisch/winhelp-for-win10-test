@@ -26,9 +26,8 @@ jobs:
         with:
           name: Dist
           path: |
-            ./dist/*.exe
-            ./dist/*.md
-            ./dist/*.json
+            ./dist/*
+            !./dist/.keep
 
 #         path: "./dist/*.exe\n./dist/*.md\n./dist/*.json"
     
