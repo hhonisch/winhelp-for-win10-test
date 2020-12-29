@@ -29,6 +29,10 @@ jobs:
             })
             const artifacts = await github.paginate(opts)
             
+            var distArtifact = null
             for(const artifact of artifacts) {
-              console.log(artifact)
+              if(artifact.name == "Dist") {
+                distArtifact = artifact
+              }
             }
+            console.log(distArtifact)
