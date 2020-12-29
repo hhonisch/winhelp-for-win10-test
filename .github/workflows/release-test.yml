@@ -23,7 +23,7 @@ jobs:
         with:
           script: |
             const opts = github.issues.listWorkflowRunArtifacts.endpoint.merge({
-              'hhonisch",
+              'hhonisch',
               'winhelp-for-win10-text',
               run_id: '449167763'
             })
