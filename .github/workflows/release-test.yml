@@ -47,7 +47,7 @@ jobs:
             
       - name: Download artifact
         env:
-          DOWNLOAD_URL: ${{fromJson(steps.get-dist-artifact-url.outputs.result).name}} 
+          DOWNLOAD_URL: ${{fromJson(steps.get-dist-artifact-url.outputs.result).archive_download_url}} 
         run: |
-          echo "Result: ${{steps.get-dist-artifact-url.outputs.result}}"
           echo "Result: $DOWNLOAD_URL"
+          curl $DOWNLOAD_URL
