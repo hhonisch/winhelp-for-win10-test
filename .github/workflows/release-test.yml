@@ -24,7 +24,7 @@ jobs:
           script: |
             const opts = github.actions.listWorkflowRunArtifacts.endpoint.merge({
               owner: 'hhonisch',
-              repo: 'winhelp-for-win10-test',
+              repo: context.repository.name,
               run_id: '449167763'
             })
             const artifacts = await github.paginate(opts)
