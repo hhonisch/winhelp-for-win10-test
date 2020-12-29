@@ -25,6 +25,12 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: Dist
-          path: "./dist/*.exe\n./dist/*.md\n./dist/*.json"
+          path: |
+            ./dist/*.exe
+            ./dist/*.md
+            ./dist/*.json
+
+#         path: "./dist/*.exe\n./dist/*.md\n./dist/*.json"
+    
             
             
