@@ -18,10 +18,12 @@ jobs:
           script: |
             console.log(context)
             
-      - name: Download artifacts
+      - name: Get artifact download URL
+        id: get-dist-artifact
         uses: actions/github-script@0.9.0
         with:
           script: |
+            // Get list of artifacts for given run 
             const opts = github.actions.listWorkflowRunArtifacts.endpoint.merge({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -29,13 +31,19 @@ jobs:
             })
             const artifacts = await github.paginate(opts)
             
+            // Find artifact named "Dist"
             var distArtifact = null
             for(const artifact of artifacts) {
-              if(artifact.name == "Distx") {
+              if(artifact.name == "Dist") {
                 distArtifact = artifact
               }
             }
             if (!distArtifact) {
               throw "Artifact not found"
             }
-            console.log(distArtifact)
+            return distArtifact
+            
+      - name: Download artifact
+        run: |
+          echo "Result: ${steps.get-dist-artifact.outputs.result}}"
+          echo "Download-URL: ${steps.get-dist-artifact.outputs.result.archive_download_url}}"
