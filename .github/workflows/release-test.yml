@@ -63,6 +63,6 @@ jobs:
       - name: Create Release
         id: create_release
         env:
-          MY_COMMIT_HASH: ${{fromJson(steps.download-build-artifacts.outputs.result).commitHash}} 
+          MY_COMMIT_HASH: ${{steps.download-build-artifacts.outputs.result}} 
         run: |
           echo "Commit hash: $MY_COMMIT_HASH
