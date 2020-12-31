@@ -58,9 +58,8 @@ jobs:
       - name: Download build artifacts
         id: download-build-artifacts
         if: steps.get-dist-artifact-url.outputs.result != ''
-        env:
-          MY_DOWNLOAD_URL: ${{fromJson(steps.get-dist-artifact-url.outputs.result).archive_download_url}} 
         run: |
+          MY_DOWNLOAD_URL=${{fromJson(steps.get-dist-artifact-url.outputs.result).archive_download_url}}
           echo "Downloading $MY_DOWNLOAD_URL"
           curl -L -o Dist.zip -H "Authorization: token ${{secrets.GITHUB_TOKEN}}" $MY_DOWNLOAD_URL
           echo "Unzipping..."
