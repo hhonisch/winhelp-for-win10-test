@@ -29,26 +29,30 @@ jobs:
           MY_RUN_ID: ${{github.event.inputs.buildRunId}}
         with:
           script: |
-            // Get list of artifacts for given run 
-            const opts = github.actions.listWorkflowRunArtifacts.endpoint.merge({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              run_id: process.env.MY_RUN_ID
-            })
-            const artifacts = await github.paginate(opts)
-            
-            // Find artifact with desired name
-            var distArtifact = null
-            for(const artifact of artifacts) {
-              if(artifact.name == process.env.MY_ARTIFACT_NAME) {
-                distArtifact = artifact
+            try {
+              // Get list of artifacts for given run 
+              const opts = github.actions.listWorkflowRunArtifacts.endpoint.merge({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                run_id: process.env.MY_RUN_ID
+              })
+              const artifacts = await github.paginate(opts)
+
+              // Find artifact with desired name
+              var distArtifact = null
+              for(const artifact of artifacts) {
+                if(artifact.name == process.env.MY_ARTIFACT_NAME) {
+                  distArtifact = artifact
+                }
               }
+              if (!distArtifact) {
+                throw "Artifact not found"
+              }
+              // console.log(distArtifact)
+              return distArtifact
+            } catch (error) {
+              core.setFailed(error.message)
             }
-            if (!distArtifact) {
-              throw "Artifact not found"
-            }
-            // console.log(distArtifact)
-            return distArtifact
             
       # Download build artifacts
       - name: Download build artifacts
