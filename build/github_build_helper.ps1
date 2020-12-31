@@ -38,9 +38,12 @@ function StoreReleaseMetaInfo() {
     # Get commit hash
     $commitHash = $env:GITHUB_SHA
 
+    # Get run ID
+    $runId = $env:GITHUB_RUN_ID
 
+    # Write JSON to file
     Write-Host "Writing to $path..."
-    $json = [ordered]@{ version = $verStr; commitHash = $commitHash }
+    $json = [ordered]@{ version = $verStr; commitHash = $commitHash; githubRunId = $runId }
     ConvertTo-Json $json -Compress | Out-File $path -Encoding ascii
 
     Write-Host "Done: Store release meta info"
