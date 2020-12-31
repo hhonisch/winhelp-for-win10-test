@@ -3,9 +3,9 @@
 
 param(
     # Build number
-    [int] $BuildNo = 0,
+    [int]$BuildNo = 0,
     # Build number offset
-    [int] $BuildNoOffset = 0
+    [int]$BuildNoOffset = 0
 
 )
 
