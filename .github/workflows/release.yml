@@ -69,12 +69,9 @@ jobs:
 
       # Dump build info
       - name: Dump build info
-        env:
-          MY_COMMIT_HASH: ${{fromJson(steps.download-build-artifacts.outputs.result).commitHash}} 
-          MY_VERSION: ${{fromJson(steps.download-build-artifacts.outputs.result).version}} 
         run: |
-          echo "Commit hash: $MY_COMMIT_HASH"
-          echo "Version: $MY_VERSION"
+          echo "Commit hash: ${{fromJson(steps.download-build-artifacts.outputs.result).commitHash}}"
+          echo "Version: ${{fromJson(steps.download-build-artifacts.outputs.result).version}}"
 
       # Create release from build info
       - name: Create Release
