@@ -7,17 +7,16 @@ on:
 
 jobs:
   release-test:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: View context attributes
-        uses: actions/github-script@0.9.0
-        with:
-          script: |
-            console.log(context)
-            
+      #- name: View context attributes
+      #  uses: actions/github-script@0.9.0
+      #  with:
+      #    script: |
+      #      console.log(context)
+       
+      # Get artifacts URL from given build run
       - name: Get artifact download URL
         id: get-dist-artifact-url
         uses: actions/github-script@0.9.0
@@ -44,9 +43,10 @@ jobs:
             if (!distArtifact) {
               throw "Artifact not found"
             }
-            console.log(distArtifact)
+            // console.log(distArtifact)
             return distArtifact
             
+      # Download build artifacts
       - name: Download build artifacts 
         id: download-build-artifacts
         env:
@@ -54,12 +54,13 @@ jobs:
         run: |
           echo "Downloading $MY_DOWNLOAD_URL"
           curl -L -o Dist.zip -H "Authorization: token ${{secrets.GITHUB_TOKEN}}" $MY_DOWNLOAD_URL
-          echo "Unzipping"
-          unzip Dist.zip
-          META=$(cat meta.json)
+          echo "Unzipping..."
+          unzip Dist.zip -d dist
+          META=$(cat ./dist/meta.json)
           echo "::set-output name=result::$META"
 
-      - name: Dump meta info
+      # Dump build info
+      - name: Dump build info
         env:
           MY_COMMIT_HASH: ${{fromJson(steps.download-build-artifacts.outputs.result).commitHash}} 
           MY_VERSION: ${{fromJson(steps.download-build-artifacts.outputs.result).version}} 
@@ -67,29 +68,29 @@ jobs:
           echo "Commit hash: $MY_COMMIT_HASH"
           echo "Version: $MY_VERSION"
 
+      # Create release from build info
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-          MY_COMMIT_HASH: ${{fromJson(steps.download-build-artifacts.outputs.result).commitHash}} 
-          MY_VERSION: ${{fromJson(steps.download-build-artifacts.outputs.result).version}} 
         with:
           tag_name: v${{fromJson(steps.download-build-artifacts.outputs.result).version}} 
           release_name: Release ${{fromJson(steps.download-build-artifacts.outputs.result).version}}
           commitish: ${{fromJson(steps.download-build-artifacts.outputs.result).commitHash}}
-          body_path: RELEASE_NOTES.md
+          body_path: ./dist/RELEASE_NOTES.md
           draft: true
           prerelease: true
-          
+
+      # Upload asset to release
       - name: Upload Release Asset
         id: upload-release-asset
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} 
-          asset_path: Setup_WinHelp4Win10.exe
-          asset_name: Setup_WinHelp4Win10.exe
+          upload_url: ${{steps.create_release.outputs.upload_url}} 
+          asset_path: ./dist/Setup_WinHelp4Win10.exe
+          asset_name: ./dist/Setup_WinHelp4Win10.exe
           asset_content_type: application/octet-stream
           
