@@ -10,7 +10,9 @@ jobs:
       - name: "Current run ID ${{ github.run_id }}: Dump Context"
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: echo "$GITHUB_CONTEXT"
+        run: |
+          echo "${{ github.run_id }}"
+          echo "$GITHUB_CONTEXT"
         
       - name: Checkout
         uses: actions/checkout@v2
