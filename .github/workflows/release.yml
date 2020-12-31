@@ -51,7 +51,8 @@ jobs:
             return distArtifact
             
       # Download build artifacts
-      - name: Download build artifacts 
+      - name: Download build artifacts
+        if: steps.get-dist-artifact-url.outputs.result
         id: download-build-artifacts
         env:
           MY_DOWNLOAD_URL: ${{fromJson(steps.get-dist-artifact-url.outputs.result).archive_download_url}} 
@@ -65,6 +66,7 @@ jobs:
 
       # Dump build info
       - name: Dump build info
+        if: steps.download-build-artifacts.outputs.result
         env:
           MY_COMMIT_HASH: ${{fromJson(steps.download-build-artifacts.outputs.result).commitHash}} 
           MY_VERSION: ${{fromJson(steps.download-build-artifacts.outputs.result).version}} 
