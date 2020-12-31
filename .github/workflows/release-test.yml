@@ -59,11 +59,25 @@ jobs:
           META=$(cat meta.json)
           echo "::set-output name=result::$META"
 
-      - name: Create Release
-        id: create_release
+      - name: Dump meta info
         env:
           MY_COMMIT_HASH: ${{fromJson(steps.download-build-artifacts.outputs.result).commitHash}} 
           MY_VERSION: ${{fromJson(steps.download-build-artifacts.outputs.result).version}} 
         run: |
           echo "Commit hash: $MY_COMMIT_HASH"
           echo "Version: $MY_VERSION"
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          MY_COMMIT_HASH: ${{fromJson(steps.download-build-artifacts.outputs.result).commitHash}} 
+          MY_VERSION: ${{fromJson(steps.download-build-artifacts.outputs.result).version}} 
+        with:
+          tag_name: v${{fromJson(steps.download-build-artifacts.outputs.result).version}} 
+          release_name: Release ${{fromJson(steps.download-build-artifacts.outputs.result).version}}
+          commitish: ${{fromJson(steps.download-build-artifacts.outputs.result).commitHash}}
+          body_path: RELEASE_NOTES.md
+          draft: true
+          prerelease: true
