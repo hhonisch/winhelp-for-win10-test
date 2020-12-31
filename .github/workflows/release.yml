@@ -57,6 +57,7 @@ jobs:
       # Download build artifacts
       - name: Download build artifacts
         id: download-build-artifacts
+        if: steps.get-dist-artifact-url.outputs.result != ''
         env:
           MY_DOWNLOAD_URL: ${{fromJson(steps.get-dist-artifact-url.outputs.result).archive_download_url}} 
         run: |
