@@ -22,7 +22,7 @@ jobs:
         
       - name: Install AutoIt
         env:
-          AUTOIT_INSTALL_DIR: "D:/Autoit3"
+          AUTOIT_INSTALL_DIR: 'D:\Autoit3'
         run: |
           choco install autoit --no-progress --yes --install-args="/D=${env:AUTOIT_INSTALL_DIR}"
           echo "${env:AUTOIT_INSTALL_DIR}" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
