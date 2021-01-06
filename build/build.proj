@@ -99,7 +99,7 @@
 
 
     <!-- Github Build -->
-    <Target Name="GithubBuild" DependsOnTargets="SetVersion;Build;Test" />
+    <Target Name="GithubBuild" DependsOnTargets="SetVersion;Build" />
 	
 	
 	<!-- Test -->
