@@ -1,10 +1,11 @@
 <Project DefaultTargets="Clean;Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
     <PropertyGroup>
-        <BinPath>$(MSBuildProjectDirectory)\..\bin</BinPath>
-        <DistPath>$(MSBuildProjectDirectory)\..\dist</DistPath>
+        <BinDir>$(MSBuildProjectDirectory)\..\bin</BinDir>
+        <DistDir>$(MSBuildProjectDirectory)\..\dist</DistDir>
         <WinHelpProxyDir>$(MSBuildProjectDirectory)\..\src\WinHelpProxy</WinHelpProxyDir>
         <SetupDir>$(MSBuildProjectDirectory)\..\src\Setup</SetupDir>
+        <TestDir>$(MSBuildProjectDirectory)\..\test</TestDir>
         <BuildNo>0</BuildNo>
         <BuildNoOffset>0</BuildNoOffset>
     </PropertyGroup>
@@ -23,9 +24,9 @@
     <!-- Clean dist files -->
     <Target Name="CleanDist">
         <ItemGroup>
-            <DistFiles Include="$(DistPath)\*.exe" />
-            <DistFiles Include="$(DistPath)\*.json" />
-            <DistFiles Include="$(DistPath)\*.md" />
+            <DistFiles Include="$(DistDir)\*.exe" />
+            <DistFiles Include="$(DistDir)\*.json" />
+            <DistFiles Include="$(DistDir)\*.md" />
         </ItemGroup>
         <Delete Files="@(DistFiles)" />
     </Target>
@@ -33,7 +34,7 @@
 
     <!-- Clean bin files -->
     <Target Name="CleanBin">
-        <RemoveDir Directories="$(BinPath)\x64;$(BinPath)\x86" />
+        <RemoveDir Directories="$(BinDir)\x64;$(BinDir)\x86" />
     </Target>
 
 
@@ -68,24 +69,24 @@
         <MSBuild Projects="@(WinHelpProxyConfs)" Targets="Build" BuildInParallel="true"/>
 
         <!-- Export binaries -->
-        <Copy SourceFiles="$(WinHelpProxyDir)\Release\WinHelpProxy.exe" DestinationFolder="$(BinPath)\x86" />
-        <Copy SourceFiles="$(WinHelpProxyDir)\x64\Release\WinHelpProxy.exe" DestinationFolder="$(BinPath)\x64" />
+        <Copy SourceFiles="$(WinHelpProxyDir)\Release\WinHelpProxy.exe" DestinationFolder="$(BinDir)\x86" />
+        <Copy SourceFiles="$(WinHelpProxyDir)\x64\Release\WinHelpProxy.exe" DestinationFolder="$(BinDir)\x64" />
     </Target>
 
 
     <!-- Build Setup -->
-    <Target Name="BuildSetup" >
+    <Target Name="BuildSetup">
         <!-- Run InnoSetup -->
         <Exec Command="iscc WinHelp4Win10.iss" WorkingDirectory="$(SetupDir)" />
         <ItemGroup>
             <SetupFiles Include="$(SetupDir)\Output\*" />
         </ItemGroup>
-        <Copy SourceFiles="@(SetupFiles)" DestinationFolder="$(DistPath)" />
+        <Copy SourceFiles="@(SetupFiles)" DestinationFolder="$(DistDir)" />
     </Target>
 
 
     <!-- Build release info -->
-    <Target Name="BuildReleaseInfo" >
+    <Target Name="BuildReleaseInfo">
         <!-- Store meta info -->
         <Exec Command="powershell.exe –NonInteractive –ExecutionPolicy Unrestricted &quot;&amp; &#39;$(MSBuildProjectDirectory)\github_build_helper.ps1&#39;&quot; StoreReleaseMetaInfo" />
         <!-- Write release notes -->
@@ -98,6 +99,16 @@
 
 
     <!-- Github Build -->
-    <Target Name="GithubBuild" DependsOnTargets="SetVersion;Build" />
+    <Target Name="GithubBuild" DependsOnTargets="SetVersion;Build;Test" />
+	
+	
+	<!-- Test -->
+	<Target Name="Test">
+        <ItemGroup>
+            <Installer Include="$(DistDir)\*.exe" />
+        </ItemGroup>
+        <!-- Run AutoIt test -->
+        <Exec Command="autoit3 /ErrorStdOut WinHelp4Win10.au3 &quot;@(Installer)&quot;" WorkingDirectory="$(TestDir)" />
+	</Target>
 
 </Project>
