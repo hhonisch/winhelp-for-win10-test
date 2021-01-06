@@ -12,7 +12,7 @@ jobs:
           GITHUB_CONTEXT: ${{ toJson(github) }}
         run: |
           echo "Run ID: ${{ github.run_id }}"
-          echo env:$GITHUB_CONTEXT
+          echo $env:GITHUB_CONTEXT
         
       - name: Checkout
         uses: actions/checkout@v2
@@ -26,7 +26,7 @@ jobs:
           echo "C:\Program Files (x86)\Autoit3\Autoit3.exe" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
       
       - name: Check path
-        run: echo %env:PATH
+        run: echo $env:PATH
 
       - name: Compile
         run: msbuild .\build\build.proj /t:GithubBuild /p:BuildNo=${{ github.run_number }}
