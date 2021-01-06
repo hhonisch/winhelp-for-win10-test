@@ -178,8 +178,7 @@ function DownloadWinHelpUpdate: Boolean;
 begin
   Result := True;
   DownloadPage.Clear;
-  //DownloadPage.Add('https://download.microsoft.com/download/A/5/6/A5651A53-2487-43C6-835A-744EB9C72579/Windows8.1-KB917607-x64.msu', 'Windows8.1-KB917607-x64.msu', '');
-  DownloadPage.Add('https://sspeed.hetzner.de/100MB.bin', '100MB.bin', '');
+  DownloadPage.Add('https://download.microsoft.com/download/A/5/6/A5651A53-2487-43C6-835A-744EB9C72579/Windows8.1-KB917607-x64.msu', 'Windows8.1-KB917607-x64.msu', '');
   DownloadPage.Show;
   try
     try
@@ -223,7 +222,7 @@ begin
   if ExpandConstant('{param:DebugBat}') = '1' then
   begin
     DoPauseScript := True;
-    ShowCmd := SW_HIDE;
+    ShowCmd := SW_SHOW;
   end;
 
   // 
@@ -256,7 +255,7 @@ function OnDownloadProgress(const Url, FileName: String; const Progress, Progres
 begin
   if Progress = ProgressMax then
   begin
-    Log(Format('Successfully downloaded file to {tmp}: %s', [FileName]));
+    Log(Format(ExpandConstant('Successfully downloaded file to {tmp}: %s'), [FileName]));
   end;
   Result := True;
 end;

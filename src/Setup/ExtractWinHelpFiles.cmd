@@ -30,12 +30,11 @@ set ERROR_OCCURRED=1
 echo Error occurred
 
 :end
-
+if "%DO_PAUSE%"=="1" (
+  Pause
+)
 if "%ERROR_OCCURRED%"=="1" (
   cmd /c exit 1
 ) else (
   cmd /c exit 0
-)
-if "%DO_PAUSE%"=="1" (
-  Pause
 )
