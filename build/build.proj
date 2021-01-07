@@ -108,7 +108,7 @@
             <Installer Include="$(DistDir)\*.exe" />
         </ItemGroup>
         <!-- Run AutoIt test -->
-        <Exec Command="autoit3 /ErrorStdOut WinHelp4Win10.au3 &quot;@(Installer)&quot;" WorkingDirectory="$(TestDir)" />
+        <Exec Command="autoit3 /ErrorStdOut WinHelp4Win10.au3 &quot;/Setup:@(Installer)&quot; &quot;/SetupLog:$(TestDir)\log\SetupLog.txt&quot; &quot;/Screenshots:$(TestDir)\log&quot; " WorkingDirectory="$(TestDir)" />
 	</Target>
 
 </Project>
