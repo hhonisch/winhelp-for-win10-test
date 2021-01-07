@@ -84,7 +84,7 @@ Func Main()
 
 	; Wait for wizard window
 	Call(LogMsg, "Waiting for wizard window...")
-	Local $WizardWinHandle = WinWait("[CLASS:TWizardForm; REGEXPTITLE:(?i)WinHelp for Windows 10]", "Select Destination Location", 10)
+	Local $WizardWinHandle = WinWait("[CLASS:TWizardForm; REGEXPTITLE:(?i)WinnHelp for Windows 10]", "Select Destination Location", 10)
 	If $WizardWinHandle = 0 Then
 		Call(ErrorExit, "Waiting timed out", 0)
 	EndIf
