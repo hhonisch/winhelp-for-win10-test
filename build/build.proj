@@ -104,7 +104,7 @@
 
 
 	<!-- Launch Tests -->
-	<Target Name="Test" DependsOnTargets="TestInstallGUI"/>
+	<Target Name="Test" DependsOnTargets="TestInstallGUI;TestUninstallGUI"/>
 
 	
 	<!-- Test install GUI-->
@@ -113,7 +113,16 @@
             <Installer Include="$(DistDir)\*.exe"/>
         </ItemGroup>
         <!-- Run AutoIt test -->
-        <Exec Command="autoit3 /ErrorStdOut WinHelp4Win10.au3 /Test:InstallGUI &quot;/Setup:@(Installer)&quot; &quot;/SetupLog:$(TestDir)\log\SetupLog.txt&quot; &quot;/Screenshots:$(TestDir)\log&quot; " WorkingDirectory="$(TestDir)"/>
+        <Exec Command="autoit3 /ErrorStdOut WinHelp4Win10.au3 /Tests:InstallGUI &quot;/Setup:@(Installer)&quot; &quot;/SetupLog:$(TestDir)\log\InstallGui.txt&quot; &quot;/Screenshots:$(TestDir)\log&quot; " WorkingDirectory="$(TestDir)"/>
+	</Target>
+
+	<!-- Test uninstall GUI-->
+	<Target Name="TestUninstallGUI">
+        <ItemGroup>
+            <Installer Include="$(DistDir)\*.exe"/>
+        </ItemGroup>
+        <!-- Run AutoIt test -->
+        <Exec Command="autoit3 /ErrorStdOut WinHelp4Win10.au3 /Tests:UninstallGUI &quot;/SetupLog:$(TestDir)\log\UninstallGui.txt&quot; &quot;/Screenshots:$(TestDir)\log&quot; " WorkingDirectory="$(TestDir)"/>
 	</Target>
 
 </Project>

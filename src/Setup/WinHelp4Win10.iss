@@ -27,7 +27,7 @@
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppId={{B7CF8649-E7A8-4877-AA4E-0D50D2D7690F}
+AppId=WinHelp4Win10
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 VersionInfoVersion={#MyAppVersion}.{#MyBuildNo}

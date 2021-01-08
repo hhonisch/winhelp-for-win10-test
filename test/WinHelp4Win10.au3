@@ -11,7 +11,7 @@ Global $DelayMs = 0
 Global $ScreenShotDir = ""
 Global $ScreenShotCount = 0
 Global $WaitTimeoutSec = 10
-Global $TestName = ""
+Global $TestNames = ""
 
 
 
@@ -22,8 +22,8 @@ Func ParseCommandLine()
 	For $i = 1 To UBound($CmdLine) - 1
 		$str = StringStripWS($CmdLine[$i], $STR_STRIPLEADING + $STR_STRIPTRAILING)
 		LogDebug($str)
-		If StringCompare(StringLeft($str, 6), "/Test:", $STR_NOCASESENSEBASIC) = 0 Then
-			$TestName = StringMid($str, 7)
+		If StringCompare(StringLeft($str, 7), "/Tests:", $STR_NOCASESENSEBASIC) = 0 Then
+			$TestNames = StringMid($str, 8)
 		ElseIf StringCompare(StringLeft($str, 7), "/Setup:", $STR_NOCASESENSEBASIC) = 0 Then
 			$SetupExe = StringMid($str, 8)
 		ElseIf StringCompare(StringLeft($str, 10), "/SetupLog:", $STR_NOCASESENSEBASIC) = 0 Then
@@ -84,48 +84,51 @@ Func TestInstallGUI()
 	
 	LogInfo("Launching " & $Cmd & "...")
 	Local $Pid = Run($Cmd)
+	if $Pid = 0 Then
+		ErrorExit("Error launching " & $Cmd, 0)
+	EndIf
 
-	Local $WizardWinHandle
+	Local $WinHandle
 	; Wait for wizard window "Select destination Location"
 	LogInfo("Waiting for wizard window (Select Destination Location)...")
-	$WizardWinHandle = WinWait("[CLASS:TWizardForm; REGEXPTITLE:(?i)WinHelp for Windows 10]", "Select Destination Location", $WaitTimeoutSec)
-	If $WizardWinHandle = 0 Then
+	$WinHandle = WinWait("[CLASS:TWizardForm; REGEXPTITLE:(?i)WinHelp for Windows 10]", "Select Destination Location", $WaitTimeoutSec)
+	If $WinHandle = 0 Then
 		ErrorExit("Waiting timed out", 0)
 	EndIf
 	Sleep($DelayMs)
 
 	; Click "Next"
 	LogInfo("Clicking 'Next'...")
-	If not ControlWaitAndClick($WizardWinHandle, "", "[CLASS:TNewButton; TEXT:&Next]") Then
-		ErrorExit("Error clicking 'Next'", $WizardWinHandle)
+	If not ControlWaitAndClick($WinHandle, "", "[CLASS:TNewButton; TEXT:&Next]") Then
+		ErrorExit("Error clicking 'Next'", $WinHandle)
 	EndIf
 	Sleep($DelayMs)
 
 	; Wait for wizard window "Ready to Install"
 	LogInfo("Waiting for wizard window (Ready to Install)...")
-	$WizardWinHandle = WinWait("[CLASS:TWizardForm; REGEXPTITLE:(?i)WinHelp for Windows 10]", "Ready to Install", $WaitTimeoutSec)
-	If $WizardWinHandle = 0 Then
+	$WinHandle = WinWait("[CLASS:TWizardForm; REGEXPTITLE:(?i)WinHelp for Windows 10]", "Ready to Install", $WaitTimeoutSec)
+	If $WinHandle = 0 Then
 		ErrorExit("Waiting timed out", 0)
 	EndIf
 
 	; Click "Install"
 	LogInfo("Clicking 'Install'...")
-	If not ControlWaitAndClick($WizardWinHandle, "", "[CLASS:TNewButton; TEXT:&Install]") Then
-		ErrorExit("Error clicking 'Install'", $WizardWinHandle)
+	If not ControlWaitAndClick($WinHandle, "", "[CLASS:TNewButton; TEXT:&Install]") Then
+		ErrorExit("Error clicking 'Install'", $WinHandle)
 	EndIf
 	Sleep($DelayMs)
 	
 	; Wait for wizard window "Setup has finished installing"
 	LogInfo("Waiting for wizard window (Setup has finished installing)...")
-	$WizardWinHandle = WinWait("[CLASS:TWizardForm; REGEXPTITLE:(?i)WinHelp for Windows 10]", "Setup has finished installing", $WaitTimeoutSec)
-	If $WizardWinHandle = 0 Then
+	$WinHandle = WinWait("[CLASS:TWizardForm; REGEXPTITLE:(?i)WinHelp for Windows 10]", "Setup has finished installing", $WaitTimeoutSec)
+	If $WinHandle = 0 Then
 		ErrorExit("Waiting timed out", 0)
 	EndIf
 
 	; Click "Finish"
 	LogInfo("Clicking 'Install'...")
-	If not ControlWaitAndClick($WizardWinHandle, "", "[CLASS:TNewButton; TEXT:&Finish]") Then
-		ErrorExit("Error clicking 'Finish'", $WizardWinHandle)
+	If not ControlWaitAndClick($WinHandle, "", "[CLASS:TNewButton; TEXT:&Finish]") Then
+		ErrorExit("Error clicking 'Finish'", $WinHandle)
 	EndIf
 	Sleep($DelayMs)
 	
@@ -134,20 +137,83 @@ EndFunc   ;==>TestInstallGUI
 
 
 
+; Test uninstall via GUI
+Func TestUninstallGUI()
+	LogInfo("Testing uninstall with GUI")
+	
+	; Reading uninstaller from registry
+	Local $Cmd = RegRead("HKLM64\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\WinHelp4Win10_is1", "UninstallString")
+	LogDebug("Uninstaller: " & $Cmd)
+
+	If $SetupLogFile <> "" Then
+		$Cmd = $Cmd & " /LOG=""" & $SetupLogFile & """"
+	EndIf
+	
+	LogInfo("Launching " & $Cmd & "...")
+	Local $Pid = Run($Cmd)
+	if $Pid = 0 Then
+		ErrorExit("Error launching " & $Cmd, 0)
+	EndIf
+	
+	Local $WinHandle
+	
+	; Wait for "are you sure" uninstall message
+	LogInfo("Waiting for ""are you sure"" uninstall message...")
+	$WinHandle = WinWait("[REGEXPTITLE:(?i)WinHelp for Windows 10 Uninstall]", "Are you sure", $WaitTimeoutSec)
+	If $WinHandle = 0 Then
+		ErrorExit("Waiting timed out", 0)
+	EndIf
+	Sleep($DelayMs)
+
+	; Click "Yes"
+	LogInfo("Clicking 'Yes'...")
+	If not ControlWaitAndClick($WinHandle, "", "[CLASS:Button; ID:6]") Then
+		ErrorExit("Error clicking 'Yes'", $WinHandle)
+	EndIf
+	Sleep($DelayMs)
+
+	; Wait for "successfully removed" uninstall message
+	LogInfo("Waiting for ""successfully removed"" uninstall message...")
+	$WinHandle = WinWait("[REGEXPTITLE:(?i)WinHelp for Windows 10 Uninstall]", "successfully removed", $WaitTimeoutSec)
+	If $WinHandle = 0 Then
+		ErrorExit("Waiting timed out", 0)
+	EndIf
+	Sleep($DelayMs)
+
+	; Click "OK"
+	LogInfo("Clicking 'OK'...")
+	If not ControlWaitAndClick($WinHandle, "", "[CLASS:Button; ID:2]") Then
+		ErrorExit("Error clicking 'OK'", $WinHandle)
+	EndIf
+	
+	Sleep($DelayMs)
+	LogInfo("Done")
+EndFunc   ;==>TestUninstallGUI
+
+
+
 ; Main
 Func Main()
 	; Parse command line
 	ParseCommandLine()
 	
-	If $TestName = "" Then
+	If $TestNames = "" Then
 		ErrorExit("No test name given", 0)
 	EndIf
 	
-	Call("Test" & $TestName)
+	LogInfo("Tests to run: " & $TestNames)
+	$TestNamesArray = StringSplit($TestNames, ",")
+	Local $i, $TestName
+	For $i = 1 to UBound($TestNamesArray) - 1
+		$TestName = StringStripWS($TestNamesArray[$i], $STR_STRIPLEADING + $STR_STRIPTRAILING)
+		LogInfo("Starting Test " & $TestName)
+		Call("Test" & $TestName)
+	Next
 	
 
 EndFunc   ;==>Main
 
+
 ; Call Main function
-SetLogLevel($LOGLEVEL_DEBUG)
+SetLogLevel($LOGLEVEL_ERROR)
 Main()
