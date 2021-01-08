@@ -104,25 +104,43 @@
 
 
 	<!-- Launch Tests -->
-	<Target Name="Test" DependsOnTargets="TestInstallGUI;TestUninstallGUI"/>
+	<Target Name="Test" DependsOnTargets="TestGUI;TestSilent"/>
 
+	<!-- Launch Tests with GUI install -->
+	<Target Name="TestGUI" DependsOnTargets="TestInstallGUI;TestUninstallGUI"/>
+
+	<!-- Launch Tests with GUI silent install -->
+	<Target Name="TestSilent" DependsOnTargets="TestInstallSilent;TestUninstallSilent"/>
 	
-	<!-- Test install GUI-->
+	<!-- Test install GUI -->
 	<Target Name="TestInstallGUI">
         <ItemGroup>
-            <Installer Include="$(DistDir)\*.exe"/>
+            <InstallerGUI Include="$(DistDir)\*.exe"/>
         </ItemGroup>
         <!-- Run AutoIt test -->
-        <Exec Command="autoit3 /ErrorStdOut WinHelp4Win10.au3 /Tests:InstallGUI &quot;/Setup:@(Installer)&quot; &quot;/SetupLog:$(TestDir)\log\InstallGui.txt&quot; &quot;/Screenshots:$(TestDir)\log&quot; " WorkingDirectory="$(TestDir)"/>
+        <Exec Command="autoit3 /ErrorStdOut WinHelp4Win10.au3 /Tests:InstallGUI &quot;/Setup:@(InstallerGUI)&quot; &quot;/SetupLog:$(TestDir)\log\InstallGui.txt&quot; &quot;/Screenshots:$(TestDir)\log&quot; " WorkingDirectory="$(TestDir)"/>
 	</Target>
 
-	<!-- Test uninstall GUI-->
+	<!-- Test uninstall GUI -->
 	<Target Name="TestUninstallGUI">
-        <ItemGroup>
-            <Installer Include="$(DistDir)\*.exe"/>
-        </ItemGroup>
         <!-- Run AutoIt test -->
         <Exec Command="autoit3 /ErrorStdOut WinHelp4Win10.au3 /Tests:UninstallGUI &quot;/SetupLog:$(TestDir)\log\UninstallGui.txt&quot; &quot;/Screenshots:$(TestDir)\log&quot; " WorkingDirectory="$(TestDir)"/>
 	</Target>
+
+	<!-- Test install silent -->
+	<Target Name="TestInstallSilent">
+        <ItemGroup>
+            <InstallerSilent Include="$(DistDir)\*.exe"/>
+        </ItemGroup>
+        <!-- Run AutoIt test -->
+        <Exec Command="autoit3 /ErrorStdOut WinHelp4Win10.au3 /Tests:InstallSilent &quot;/Setup:@(InstallerSilent)&quot; &quot;/SetupLog:$(TestDir)\log\InstallSilent.txt&quot; &quot;/Screenshots:$(TestDir)\log&quot; " WorkingDirectory="$(TestDir)"/>
+	</Target>
+
+	<!-- Test uninstall silent -->
+	<Target Name="TestUninstallSilent">
+        <!-- Run AutoIt test -->
+        <Exec Command="autoit3 /ErrorStdOut WinHelp4Win10.au3 /Tests:UninstallSilent &quot;/SetupLog:$(TestDir)\log\UninstallSilent.txt&quot; &quot;/Screenshots:$(TestDir)\log&quot; " WorkingDirectory="$(TestDir)"/>
+	</Target>
+
 
 </Project>

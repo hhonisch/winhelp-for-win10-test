@@ -10,7 +10,8 @@ Global $SetupLogFile = ""
 Global $DelayMs = 0
 Global $ScreenShotDir = ""
 Global $ScreenShotCount = 0
-Global $WaitTimeoutSec = 10
+Global $InstallWaitTimeoutSec = 30
+Global $UninstallWaitTimeoutSec = 30
 Global $TestNames = ""
 
 
@@ -91,7 +92,7 @@ Func TestInstallGUI()
 	Local $WinHandle
 	; Wait for wizard window "Select destination Location"
 	LogInfo("Waiting for wizard window (Select Destination Location)...")
-	$WinHandle = WinWait("[CLASS:TWizardForm; REGEXPTITLE:(?i)WinHelp for Windows 10]", "Select Destination Location", $WaitTimeoutSec)
+	$WinHandle = WinWait("[CLASS:TWizardForm; REGEXPTITLE:(?i)WinHelp for Windows 10]", "Select Destination Location", $InstallWaitTimeoutSec)
 	If $WinHandle = 0 Then
 		ErrorExit("Waiting timed out", 0)
 	EndIf
@@ -106,7 +107,7 @@ Func TestInstallGUI()
 
 	; Wait for wizard window "Ready to Install"
 	LogInfo("Waiting for wizard window (Ready to Install)...")
-	$WinHandle = WinWait("[CLASS:TWizardForm; REGEXPTITLE:(?i)WinHelp for Windows 10]", "Ready to Install", $WaitTimeoutSec)
+	$WinHandle = WinWait("[CLASS:TWizardForm; REGEXPTITLE:(?i)WinHelp for Windows 10]", "Ready to Install", $InstallWaitTimeoutSec)
 	If $WinHandle = 0 Then
 		ErrorExit("Waiting timed out", 0)
 	EndIf
@@ -120,7 +121,7 @@ Func TestInstallGUI()
 	
 	; Wait for wizard window "Setup has finished installing"
 	LogInfo("Waiting for wizard window (Setup has finished installing)...")
-	$WinHandle = WinWait("[CLASS:TWizardForm; REGEXPTITLE:(?i)WinHelp for Windows 10]", "Setup has finished installing", $WaitTimeoutSec)
+	$WinHandle = WinWait("[CLASS:TWizardForm; REGEXPTITLE:(?i)WinHelp for Windows 10]", "Setup has finished installing", $InstallWaitTimeoutSec)
 	If $WinHandle = 0 Then
 		ErrorExit("Waiting timed out", 0)
 	EndIf
@@ -159,7 +160,7 @@ Func TestUninstallGUI()
 	
 	; Wait for "are you sure" uninstall message
 	LogInfo("Waiting for ""are you sure"" uninstall message...")
-	$WinHandle = WinWait("[REGEXPTITLE:(?i)WinHelp for Windows 10 Uninstall]", "Are you sure", $WaitTimeoutSec)
+	$WinHandle = WinWait("[REGEXPTITLE:(?i)WinHelp for Windows 10 Uninstall]", "Are you sure", $UninstallWaitTimeoutSec)
 	If $WinHandle = 0 Then
 		ErrorExit("Waiting timed out", 0)
 	EndIf
@@ -174,7 +175,7 @@ Func TestUninstallGUI()
 
 	; Wait for "successfully removed" uninstall message
 	LogInfo("Waiting for ""successfully removed"" uninstall message...")
-	$WinHandle = WinWait("[REGEXPTITLE:(?i)WinHelp for Windows 10 Uninstall]", "successfully removed", $WaitTimeoutSec)
+	$WinHandle = WinWait("[REGEXPTITLE:(?i)WinHelp for Windows 10 Uninstall]", "successfully removed", $UninstallWaitTimeoutSec)
 	If $WinHandle = 0 Then
 		ErrorExit("Waiting timed out", 0)
 	EndIf
@@ -190,6 +191,72 @@ Func TestUninstallGUI()
 	LogInfo("Done")
 EndFunc   ;==>TestUninstallGUI
 
+
+
+; Test silent install
+Func TestInstallSilent()
+	LogInfo("Testing silent install")
+	
+	; Launch installer
+	Local $Cmd = """" & $SetupExe & """ /SILENT"
+	If $SetupLogFile <> "" Then
+		$Cmd = $Cmd & " /LOG=""" & $SetupLogFile & """"
+	EndIf
+	
+	LogInfo("Launching " & $Cmd & "...")
+	Local $Pid = Run($Cmd)
+	if $Pid = 0 Then
+		ErrorExit("Error launching " & $Cmd, 0)
+	EndIf
+
+	; Wait for installer to exit
+	LogInfo("Waiting for installer to exit...")
+	Local $Result = ProcessWaitClose($Pid, $InstallWaitTimeoutSec)
+	If $Result = 0 Then
+		ErrorExit("Waiting timed out", 0)
+	EndIf
+
+	; Check error code
+	If @extended <> 0 Then
+		ErrorExit("Installer exited with error code: " & @extended, 0)
+	EndIf
+	
+	LogInfo("Done")
+EndFunc   ;==>TestInstallSilent
+
+
+
+; Test silent uninstall
+Func TestUninstallSilent()
+	LogInfo("Testing silent uninstall")
+	
+	; Reading uninstaller from registry
+	Local $Cmd = RegRead("HKLM64\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\WinHelp4Win10_is1", "QuietUninstallString")
+	LogDebug("Uninstaller: " & $Cmd)
+
+	If $SetupLogFile <> "" Then
+		$Cmd = $Cmd & " /LOG=""" & $SetupLogFile & """"
+	EndIf
+	
+	LogInfo("Launching " & $Cmd & "...")
+	Local $Pid = Run($Cmd)
+	if $Pid = 0 Then
+		ErrorExit("Error launching " & $Cmd, 0)
+	EndIf
+	
+	; Wait for installer to exit
+	LogInfo("Waiting for uninstaller to exit...")
+	Local $Result = ProcessWaitClose($Pid, $InstallWaitTimeoutSec)
+	If $Result = 0 Then
+		ErrorExit("Waiting timed out", 0)
+	EndIf
+
+	; Check error code
+	If @extended <> 0 Then
+		ErrorExit("Uninstaller exited with error code: " & @extended, 0)
+	EndIf
+	LogInfo("Done")
+EndFunc   ;==>TestUninstallGUI
 
 
 ; Main
