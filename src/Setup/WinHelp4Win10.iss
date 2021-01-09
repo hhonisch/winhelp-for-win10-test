@@ -279,23 +279,45 @@ begin
 end;
 
 
+
 // Initialize wizard
 procedure InitializeWizard;
 var
-  TmpPath: String;
+  DownloadedMsuPath: String;
+  Msg: String;
 begin
-  // Check if MSU file is available
-  TmpPath := ExpandConstant('{src}\{#MsuFileName}');
-  if FileExists(TmpPath) then
+  // Check for expicit MSU path
+  DownloadedMsuPath := ExpandConstant('{param:Msu|}');
+  if DownloadedMsuPath <> '' then
   begin
-    Log('Use existing MSU file: ' + TmpPath);
-    MsuPath := TmpPath;
+    if FileExists(DownloadedMsuPath) then
+    begin
+      Log('Use existing MSU file: ' + DownloadedMsuPath);
+      MsuPath := DownloadedMsuPath;
+    end
+    else
+    begin
+      Msg := Format('File not found: %s', [DownloadedMsuPath]);
+      Log(Msg);
+      SuppressibleMsgBox(Msg, mbCriticalError, MB_OK, IDOK);
+      Abort;
+    end;
   end
   else
   begin
-    Log('No MSU file found => must be downloaded');
-    DownloadPage := CreateDownloadPage(SetupMessage(msgWizardPreparing), SetupMessage(msgPreparingDesc), @OnDownloadProgress);
-    MsuPath := '';
+    // Check if downloaded MSU file is available in same dir as setup
+    DownloadedMsuPath := ExpandConstant('{src}\{#MsuFileName}');
+    if FileExists(DownloadedMsuPath) then
+    begin
+      Log('Use existing MSU file: ' + DownloadedMsuPath);
+      MsuPath := DownloadedMsuPath;
+    end
+    else
+    begin
+      Log('No MSU file found => must be downloaded');
+      DownloadPage := CreateDownloadPage(SetupMessage(msgWizardPreparing), SetupMessage(msgPreparingDesc), @OnDownloadProgress);
+      MsuPath := '';
+    end;
   end;
 end;
 
