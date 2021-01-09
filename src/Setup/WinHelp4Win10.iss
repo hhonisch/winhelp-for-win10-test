@@ -18,6 +18,8 @@
 #define WinHelpSrcPrefix64 WinHelpSrcDir + "\amd64_microsoft-windows-winhstb_31bf3856ad364e35_6.3.9600.20470_"
 #define WinHelpResSrcPrefix64 WinHelpSrcDir + "\amd64_microsoft-windows-winhstb.resources_31bf3856ad364e35_6.3.9600.20470_"
 
+#define BinInputDir SourcePath + "..\..\bin"
+
 
 #if defined(TestRelease)
   #define MyAppName   MyAppName + " " + TestRelease
@@ -39,6 +41,7 @@ DisableProgramGroupPage=yes
 DisableReadyPage=no
 ArchitecturesAllowed=x64 x86
 ArchitecturesInstallIn64BitMode=x64
+MinVersion=10.0
 
 #ifndef TestRelease
 Compression=lzma2
@@ -47,7 +50,7 @@ SolidCompression=Yes
 Compression=lzma2/fast
 #endif
 
-PrivilegesRequired=none
+PrivilegesRequired=admin
 OutputDir={#SourcePath}\Output
 OutputBaseFilename=Setup_WinHelp4Win10
 WizardStyle=modern
@@ -61,6 +64,9 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Files]
 Source: "ExtractWinHelpFiles.cmd"; Flags: dontcopy
+Source: "{#BinInputDir}\x64\*"; DestDir: "{app}"; Check: IsWin64
+Source: "{#BinInputDir}\x86\*"; DestDir: "{app}"; Check: not IsWin64
+
 // 64 Bit WinHelp files
 Source: "{#WinHelpSrcPrefix64}none_1a54d9f2f676f6c2\*.dll"; DestDir: "{app}"; Flags: ignoreversion external; Check: IsWin64
 Source: "{#WinHelpSrcPrefix64}none_1a54d9f2f676f6c2\winhlp32.exe"; DestDir: "{app}"; DestName: "mywinhlp32.exe"; Flags: ignoreversion external; Check: IsWin64
@@ -166,7 +172,7 @@ Source: "{#WinHelpResSrcPrefix32}\x86_microsoft-windows-winhstb.resources_31bf38
 
 
 [Registry]
-;Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\winhlp32.exe"; ValueType: string; ValueName: "Debugger"; ValueData: """{app}\WinHelpProxy.exe"""; Flags: uninsdeletevalue uninsdeletekeyifempty
+Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\winhlp32.exe"; ValueType: string; ValueName: "Debugger"; ValueData: """{app}\WinHelpProxy.exe"""; Flags: uninsdeletevalue uninsdeletekeyifempty
 
 
 [Code]
@@ -232,7 +238,7 @@ begin
     ShowCmd := SW_SHOW;
   end;
 
-  // 
+  // Add parameter to indicate pausing script
   if DoPauseScript then
   begin
     Params := Params + ' 1';
@@ -262,6 +268,7 @@ begin
 end;
 
 
+// Track download progress
 function OnDownloadProgress(const Url, FileName: String; const Progress, ProgressMax: Int64): Boolean;
 begin
   if Progress = ProgressMax then
@@ -293,6 +300,7 @@ begin
 end;
 
 
+// When wizard page changes
 procedure CurPageChanged(CurPageID: Integer);
 begin
   if CurPageID = wpReady then
@@ -302,19 +310,31 @@ begin
 end;
 
 
+
+// When preparing to install
+function PrepareToInstall(var NeedsRestart: Boolean): String;
+begin
+  if not ExtractWinHelpFromMsu then
+  begin
+    Result := 'Error extracting WinHelp files from ' + MsuPath;
+  end;
+end;
+
+
+
+// When clicking "Next" button
 function NextButtonClick(CurPageID: Integer): Boolean;
 begin
   if CurPageID = wpReady then 
   begin
+    // Download MSU file if required
     if MsuPath = '' then
     begin
-      if DownloadWinHelpUpdate then
-      begin
-        if ExtractWinHelpFromMsu then
-        begin
-          Result := True;
-        end;
-      end;
+      Result := DownloadWinHelpUpdate;
+    end
+    else
+    begin
+      Result := True;
     end;
   end 
   else
