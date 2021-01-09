@@ -8,7 +8,6 @@ param(
 )
 
 
-
 # Terminate on exception
 trap {
     Write-Host "Error: $_"

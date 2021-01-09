@@ -1,4 +1,3 @@
-
 #Requires -Version 5
 
 param(
@@ -6,7 +5,6 @@ param(
     [int]$BuildNo = 0,
     # Build number offset
     [int]$BuildNoOffset = 0
-
 )
 
 
