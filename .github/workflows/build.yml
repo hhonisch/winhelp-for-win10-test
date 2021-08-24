@@ -59,7 +59,7 @@ jobs:
 
       - name: "Test artifacts"
         timeout-minutes: 5
-        run: msbuild .\build\integration-test.proj
+        run: msbuild .\build\integration_test.proj
 
       - name: Upload test logs
         if: always()
